@@ -1,0 +1,124 @@
+Estrutura inicial criada no projeto
+
+src/main/java - vão as classes java desenvolvidas.
+src/main/java/com.ph - PhmoneyApplication.java - classe principal do projeto, onde se iniciam as coisas
+	Esta classe possui a annotation @SpringBootApplication - essa anotation possui mais anotations por dentro, uma delas é a de 
+	scanner @ComponentScan, então é recomendado que todas as outras classes criadas sejam filhas do pacote com.ph, para que essa 
+	propriedade consiga enxergar as classes filhas.
+	Para startar a aplicação execute o main.
+
+src/main/resources/static - onde coloca arquivos estáticos
+src/main/resources/templates - vão os templates...ahh jura?
+src/main/resources/application.properties - várias configurações do spring boot podem ser feitas por ai, como conexão ao banco de dados
+
+mvnw (linux/mac)
+mvnw.cmd (windows)
+é o maven portátil que vai dentro do projeto, para não precisar instalar o maven na máquina.
+
+Aula 3.2 - arquivo src/main/resources/application.properties - configura o mysql   
+  {
+  	spring.jpa.database=MYSQL
+	spring.datasource.url=jdbc:mysql://localhost/phmoney?createDatabaseIfNotExists=true&useSSL=false
+	spring.datasource.username=root
+	spring.datasource.password=root
+	
+	spring.jpa.show-sql=true
+  }
+
+pom old
+
+								<?xml version="1.0" encoding="UTF-8"?>
+								<project xmlns="http://maven.apache.org/POM/4.0.0"
+									xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+									xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+									<modelVersion>4.0.0</modelVersion>
+								
+									<groupId>com.ph</groupId>
+									<artifactId>phmoney</artifactId>
+									<version>1.0.0-SNAPSHOT</version>
+									<packaging>jar</packaging>
+								
+									<name>phmoney</name>
+									<description>Demo project for Spring Boot</description>
+								
+									<parent>
+										<groupId>org.springframework.boot</groupId>
+										<artifactId>spring-boot-starter-parent</artifactId>
+										<version>2.0.5.RELEASE</version>
+										<relativePath /> <!-- lookup parent from repository -->
+									</parent>
+								
+									<properties>
+										<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+										<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+										<java.version>1.8</java.version>
+									</properties>
+								
+									<dependencies>
+										<dependency>
+											<groupId>org.springframework.boot</groupId>
+											<!-- tudo que o jpa precisa para funcionar, e conexão com banco de dados -->
+											<artifactId>spring-boot-starter-data-jpa</artifactId>
+										</dependency>
+										<dependency>
+											<groupId>org.springframework.boot</groupId>
+											<!-- possui um tomcat embarcado -->
+											<artifactId>spring-boot-starter-web</artifactId>
+										</dependency>
+										<dependency>
+											<groupId>org.flywaydb</groupId>
+											<artifactId>flyway-core</artifactId>
+										</dependency>
+								
+										<dependency>
+											<groupId>org.springframework.boot</groupId>
+											<!-- faz o deploy automaticamente apos alterar algo(geralmente pagina 
+												ou java) -->
+											<artifactId>spring-boot-devtools</artifactId>
+											<scope>runtime</scope>
+										</dependency>
+										<dependency>
+											<groupId>mysql</groupId>
+											<artifactId>mysql-connector-java</artifactId>
+											<scope>runtime</scope>
+										</dependency>
+										<dependency>
+											<groupId>org.springframework.boot</groupId>
+											<!-- configurações para o teste funcionar -->
+											<artifactId>spring-boot-starter-test</artifactId>
+											<scope>test</scope>
+										</dependency>
+										<dependency>
+											<!-- mysql -->
+											<groupId>mysql</groupId>
+											<artifactId>mysql-connector-java</artifactId>
+											<scope>runtime</scope><!-- mysql -->
+										</dependency>
+										
+									</dependencies>
+								
+									<build>
+										<plugins>
+											<plugin>
+												<groupId>org.springframework.boot</groupId>
+												<!-- plugin do maven do spring boot, se quiser rodar por linha de comando,etc. 
+													Ele que gera o jar com todas as bibliotecas,etc -->
+												<artifactId>spring-boot-maven-plugin</artifactId>
+											</plugin>
+										</plugins>
+									</build>
+								
+								
+								</project>
+								
+Aula 3.8
+	arquivo application.properties
+spring.jackson.deserialization.fail-on-unknown-properties = true
+	Essa linha acima é para o caso de a sua bean ter apenas a entidade categoria mas o que está sendo inserido vai além, 
+	o jackson é para converter o json para java e vice versa. 
+	Fail on unknown, falhar ao desconhecer = true. Quando inserir mais do que deve falha
+
+Status code:
+2xx -> Sucesso	
+4xx -> Erro do cliente
+5xx -> Erro no serviço/servidor
