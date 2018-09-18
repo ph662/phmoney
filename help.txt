@@ -122,3 +122,19 @@ Status code:
 2xx -> Sucesso	
 4xx -> Erro do cliente
 5xx -> Erro no serviço/servidor
+
+Aula 3.9 
+	Exceptions
+	
+extends ResponseEntityExceptionHandler captura exceções de respostas de entidades
+Essa classe ResponseEntityExceptionHandler possui muitos métodos para tratar diferentes tipos de problemas.
+
+handleExceptionInternal estou delegando para ele tratar, só que posso passar um body 
+
+@ControllerAdvice observa toda a aplicação para capturar exceções
+
+MessageSource - objeto ja disponivel quando sobe a aplicação - pega a mensagem do 
+arquivo src/main/resources/messages.properties
+
+Aula 3.10
+
