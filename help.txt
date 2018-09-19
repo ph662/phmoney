@@ -131,10 +131,45 @@ Essa classe ResponseEntityExceptionHandler possui muitos métodos para tratar di
 
 handleExceptionInternal estou delegando para ele tratar, só que posso passar um body 
 
-@ControllerAdvice observa toda a aplicação para capturar exceções
+@ControllerAdvice observa toda a aplicação para capturar exceções - 
+compartilha a classe com essa anotation para todos os controles da aplicação.
 
 MessageSource - objeto ja disponivel quando sobe a aplicação - pega a mensagem do 
 arquivo src/main/resources/messages.properties
 
 Aula 3.10
+Nesse exemplo houve a tentativa de inserir valor null em nome
+TABLE categoria (
+nome VARCHAR(50) NOT NULL
+mas o servidor lança --> 
+	status": 500,
+    "error": "Internal Server Error",
+    "exception": "org.springframework.dao.DataIntegrityViolationException",
 
+No maven essa dependencia ja possui o hibernate validator
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+-Adiciona no entity bean(dentro de model) a tag de javax.validation.constraints @NotNull 
+-Adiciona no metodo criar(@Valid do resource essa tag @Valid para acionar a validação
+	Só essas duas anotations ja retornam 400 BadRequest e não retorna exception 
+	pro usuário com erro 500
+
+Na classe de exception add um metodo para capturar a exceçao de argumento invalido
+
+getBindingResult() possui a lista de todos os erros
+
+Para customizar a mensagem que aparece pelo validator @NotNull
+crie em src/main/resources/ValidationMessages.properties
+javax.validation.constraints.NotNull.message=Eh Obrigatorio
+Este codigo do javax esta dentro da propria annotation @NotNull
+
+javax.validation.constraints.NotNull.message={0} Eh Obrigatorio   
+esse 0 é o parametro problematico, para customizar esse nome do jeito que quiser 
+edite em messages.properties  -> categoria.nome=Nome
+
+
+Agora para validar quantidade de caracteres
+Annotation @Size(min = 3, max = 20), entra na annotation e pega o codigo dela, cola em Validation.properties
+edita o conteudo javax.validation.constraints.Size.message={0} deve ter entre {min} e {max} caracteres
+min e max vem da propriedade da annotation
+ 
