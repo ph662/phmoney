@@ -173,3 +173,6 @@ Annotation @Size(min = 3, max = 20), entra na annotation e pega o codigo dela, c
 edita o conteudo javax.validation.constraints.Size.message={0} deve ter entre {min} e {max} caracteres
 min e max vem da propriedade da annotation
  
+ 
+ 
+3.11
