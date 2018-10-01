@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.ph.model.Categoria;
+import com.ph.event.RecursoCriadoEvent;
 import com.ph.model.Pessoa;
 import com.ph.repository.PessoaRepository;
 
@@ -41,6 +42,10 @@ public class PessoaResource {
 	@Autowired
 	private PessoaRepository pessoaRepository;
 
+	// dispara evento no spring
+	@Autowired
+	private ApplicationEventPublisher publisher;
+
 	// Usa Get pois para buscar via HTTP o verbo GET é o correto
 	@GetMapping
 	public List<Pessoa> listar() {
@@ -59,14 +64,22 @@ public class PessoaResource {
 	public ResponseEntity<Pessoa> criar(@Valid @RequestBody Pessoa pessoa, HttpServletResponse response) {
 
 		Pessoa pessoaSalva = pessoaRepository.save(pessoa);
+		/*
+		 * // Cria URL com o id do que foi criado no servidor URI uri =
+		 * ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
+		 * .buildAndExpand(pessoaSalva.getCodigo()).toUri();
+		 * response.setHeader("Location", uri.toASCIIString());
+		 */
+		// utilizando esse evento eh possivel extender a aplicação sem precisar mexer
+		// nessa classe PessoaResource
+		publisher.publishEvent(new RecursoCriadoEvent(this, response, pessoaSalva.getCodigo()));
 
-		// Cria URL com o id do que foi criado no servidor
-		URI uri = ServletUriComponentsBuilder.fromCurrentRequestUri().path("/{codigo}")
-				.buildAndExpand(pessoaSalva.getCodigo()).toUri();
-		response.setHeader("Location", uri.toASCIIString());
+		/*
+		 * // retorna o que foi criado neste momento return
+		 * ResponseEntity.created(uri).body(pessoaSalva);
+		 */
+		return ResponseEntity.status(HttpStatus.CREATED).body(pessoaSalva);
 
-		// retorna o que foi criado neste momento
-		return ResponseEntity.created(uri).body(pessoaSalva);
 	}
 
 	// o codigo numero que vem por parametro entra em {codigo} e depois entra em
