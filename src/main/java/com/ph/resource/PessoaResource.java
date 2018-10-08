@@ -1,23 +1,25 @@
 package com.ph.resource;
 
-import java.net.URI;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ph.event.RecursoCriadoEvent;
 import com.ph.model.Pessoa;
@@ -96,6 +98,34 @@ public class PessoaResource {
 	public String outro() {
 		return "outro";
 
+	}
+
+	@DeleteMapping("/{codigo}")
+	@ResponseStatus(HttpStatus.NO_CONTENT) // erro 204
+	public void remover(@PathVariable Long codigo) {
+
+		pessoaRepository.delete(codigo);
+
+	}
+
+	@PutMapping("/{codigo}")
+	public ResponseEntity<Pessoa> atualizar(@PathVariable Long codigo, @Valid @RequestBody Pessoa pessoa) {
+
+		Pessoa pessoaSalva = pessoaRepository.findOne(codigo);
+
+		if (pessoaSalva == null) {
+			// o esperado eh retornar uma pessoa
+			throw new EmptyResultDataAccessException(1);
+		}
+
+		// 1 pessoa, vem do postman, dados que quer atualizar
+		// 2 pessoaSalva recebe o valor de pessoa, eh feita uma copia pelo
+		// copyProperties
+		// 3 codigo vem pela url pois na var '1 pessoa' o codigo esta null
+		BeanUtils.copyProperties(pessoa, pessoaSalva, "codigo");
+
+		pessoaRepository.save(pessoaSalva);
+		return ResponseEntity.ok(pessoaSalva);
 	}
 
 }
